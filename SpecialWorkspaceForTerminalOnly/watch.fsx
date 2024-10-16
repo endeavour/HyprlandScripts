@@ -38,9 +38,9 @@ let isSpecial name =
   
 let parseEvent str =
   match str with
-  | ParseRegex "^focusedmon>>DP-\d+,(\d+)" [workspaceName] when not <| isSpecial workspaceName -> Some (Normal workspaceName)
+  | ParseRegex "^focusedmon>>.*,(\d+)" [workspaceName] when not <| isSpecial workspaceName -> Some (Normal workspaceName)
   | ParseRegex "^workspacev2>>(\d+),(.*)" [ParseInt workspaceId; workspaceName] when not <| isSpecial workspaceName -> Some (Normal workspaceName)
-  | ParseRegex "^focusedmon>>DP-\d+,(\d+)" [workspaceName] -> Some (Special workspaceName)
+  | ParseRegex "^focusedmon>>.*,(\d+)" [workspaceName] -> Some (Special workspaceName)
   | ParseRegex "^workspacev2>>(\d+),(.*)" [ParseInt workspaceId; workspaceName]-> Some (Special workspaceName)  
   | ParseRegex "^activespecial>>,(.*)" [monitorName] -> Some(ClosedSpecial)
   | ParseRegex "^activespecial>>(.*),(.*)" [workspaceName; monitorName] -> Some (Special workspaceName)
