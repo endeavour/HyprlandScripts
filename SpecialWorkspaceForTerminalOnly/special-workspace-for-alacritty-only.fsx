@@ -4,6 +4,12 @@
 open System
 open System.Text.RegularExpressions
 
+let currentWorkspace = Environment.GetCommandLineArgs()[2]
+
+do
+  let log = sprintf "Current workspace: %s" currentWorkspace
+  Console.Error.WriteLine(log)
+
 // ParseRegex parses a regular expression and returns a list of the strings that match each group in
 // the regular expression.
 // List.tail is called to eliminate the first element in the list, which is the full matched expression,
@@ -57,11 +63,13 @@ lines
   | Special workSpaceName -> (lastNormalWorkspace, workSpaceName, Some newEvent)
   | ClosedSpecial -> (lastNormalWorkspace, lastNormalWorkspace, Some newEvent)
   | _ -> (lastNormalWorkspace, currentWorkspace, Some newEvent)
-  ) (initialWorkspace, initialWorkspace, None)
+  ) (initialWorkspace, currentWorkspace, None)
 |> Seq.where (fun (_,currentWorkspace,_) -> isSpecial currentWorkspace)
 |> Seq.iter (fun (lastNormalWorkspace, currentWorkspace, evt) ->
   match evt with
   | Some(WindowOpened (windowAddr, workspaceName, windowClass, windowTitle:string)) when windowClass <> "Alacritty" ->
-    printfn "dispatch movetoworkspace name:%s,address:0x%s" lastNormalWorkspace windowAddr    
+    let output = sprintf "dispatch movetoworkspace %s,address:0x%s" lastNormalWorkspace windowAddr
+    Console.Error.WriteLine(output)
+    printfn "%s" output
   | _ -> ()
   )    
